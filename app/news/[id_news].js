@@ -1,9 +1,8 @@
-import {View, Text, StyleSheet } from 'react-native'
+import {View, Text, StyleSheet, useColorScheme } from 'react-native'
 import {useEffect, useState} from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { API_URL } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BackButton } from '../../components/BackButton';
 
 
 export default function DetailNews() {
@@ -12,6 +11,8 @@ export default function DetailNews() {
     const params = useLocalSearchParams();
     const idNews = params.id_news
     const [newsData, setNewsData] = useState([]);
+    const colorScheme = useColorScheme();
+    const textColor = colorScheme === 'light' ? styles.blackText : styles.whiteText
 
      const haveToken = async () => {
         const token = await AsyncStorage.getItem('authToken')
@@ -46,12 +47,11 @@ export default function DetailNews() {
 
     return(
         <View style={styles.container}>
-            <BackButton href='home' />
             <View style={styles.header}>
-                <Text style={styles.title}>{newsData.title}</Text>
-                <Text style={styles.subtitle}>{newsData.subtitle}</Text>
+                <Text style={[styles.title, textColor]}>{newsData.title}</Text>
+                <Text style={[styles.subtitle, textColor]}>{[newsData.subtitle]}</Text>
             </View>
-            <Text>{newsData.body}</Text>
+            <Text style={textColor}>{newsData.body}</Text>
         </View>
     )
     
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingInline: 20,
-        paddingBlock: 70,
+        paddingBlock: 100,
         gap: 20
     },
     header:{
@@ -73,6 +73,12 @@ const styles = StyleSheet.create({
     },
     subtitle:{
         fontSize: 16,
-        color: '#373A40'
+        opacity: 0.7
+    },
+    whiteText: {
+        color: '#F1F4F6'
+    },
+    blackText: {
+        color: '#333A3F'
     }
 })

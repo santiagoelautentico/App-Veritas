@@ -10,11 +10,8 @@ import { Screen } from '../../components/Screen'
 import NewCard from '../../components/newsCard';
 
 export default function Home(){
-    
     const router = useRouter();
-    
     const [news, setNews] = useState([]);
-
     const haveToken = async () => {
         try {
             const token = await AsyncStorage.getItem('authToken');
@@ -28,7 +25,6 @@ export default function Home(){
             console.error("Error leyendo token", error);
         }
     };
-
     const getNews = async () => {
         try {
             const token = await AsyncStorage.getItem('authToken')
@@ -50,12 +46,10 @@ export default function Home(){
             console.error("Error to get News", error);
         }
     };
-
     useEffect(() => {
         haveToken();
         getNews()
     }, []);
-
     return (
         <Screen>
             <FlatList
@@ -80,6 +74,7 @@ export default function Home(){
 const styles = StyleSheet.create({
     contentContainer: {
         paddingHorizontal: 20,
+        paddingBottom: 100
     },
     emptyContainer: {
         flex: 1,

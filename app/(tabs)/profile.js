@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Pressable, FlatList} from 'react-native'
+import {View, Text, StyleSheet, Pressable, FlatList, ScrollView, useColorScheme} from 'react-native'
 import { useEffect, useState } from 'react';
 import CloseSession from '../../components/CloseSession'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,13 +6,17 @@ import CountryProfile from '../../components/CountryProfile'
 import { useRouter } from 'expo-router';
 import { API_URL } from '../../constants/api';
 import NewCard from '../../components/newsCard';
+import { Screen } from '../../components/Screen';
+
 
 export default function profile() {
 
+const colorScheme = useColorScheme();
 const router = useRouter();
-
 const [userData, setUser] = useState('')
 const [news, setNews] = useState([])
+const bgStyle = colorScheme === 'light' ? styles.bgWhite : styles.bgBlack
+const colorText = colorScheme === 'light' ? styles.textBlack : styles.textWhite
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,7 +28,6 @@ const [news, setNews] = useState([])
         };
         fetchData();
     }, []);
-
      const haveToken = async () => {
         try {
             const token = await AsyncStorage.getItem('authToken');
@@ -38,7 +41,6 @@ const [news, setNews] = useState([])
             console.error("Error leyendo token", error);
         }
     };
-
     const getNews = async () => {
         try {
             const token = await AsyncStorage.getItem('authToken')
@@ -58,7 +60,6 @@ const [news, setNews] = useState([])
             console.error("Error to get News", error);
         }
     };
-
     useEffect(() => {
         haveToken();
         if (userData?.id_user) {
@@ -72,55 +73,53 @@ const [news, setNews] = useState([])
         console.log('Estado de news actualizado:', news);
     }, [news]); // Solo para hacer log cuando news cambie
 
-
-
+    
     return (
-        <View style={styles.container}>
-            <View style={styles.buttomClose}>
-                <CloseSession />
-            </View>
-            <View>
-                <CountryProfile />
-            </View>
-            <View>
-                <Text style={styles.title}>{userData?.username}</Text>
-                <View style={styles.detailsContainer}>
-                    <Text>Ocupation: {userData?.ocupation}</Text>
-                    <Text>-</Text>
-                    <Text>Type of journalist: {userData?.type_of_journalist}</Text>
+        <ScrollView style={[styles.container, bgStyle]}>
+            <Screen>
+                <View style={styles.buttomClose}>
+                    <CloseSession />
                 </View>
-                <View style={styles.bioContainer}>
-                    <Text style={styles.subtitle}>Biography</Text>
-                    <Text>{userData?.biography}</Text>
+                <View>
+                    <CountryProfile />
                 </View>
-            </View>
-            
-            <Text style={styles.subtitle}>Posts</Text>
-            
-            {/* FlatList necesita flex para ocupar el espacio disponible */}
-            <FlatList
-                data={news}
-                style={styles.flatList}
-                contentContainerStyle={styles.contentContainer}
-                keyExtractor={(item) => item.id_news.toString()}
-                renderItem={({ item }) => (
-                    <NewCard
-                        id_news={item.id_news}
-                        title={item.title}
-                        id_country={item.id_country}
-                        subtitle={item.subtitle}
-                        body={item.body}
-                        created_at={item.created_at}
-                    />
+                <View>
+                    <Text style={[styles.title, colorText]}>{userData?.username}</Text>
+                    <View style={styles.detailsContainer}>
+                        <Text style={colorText}>Ocupation: {userData?.ocupation}</Text>
+                        <Text style={colorText}>-</Text>
+                        <Text style={colorText}>Type of journalist: {userData?.type_of_journalist}</Text>
+                    </View>
+                    <View style={[styles.bioContainer, colorText]}>
+                        <Text style={[styles.subtitle, colorText]}>Biography</Text>
+                        <Text style={colorText}>{userData?.biography}</Text>
+                    </View>
+                </View>
+                
+                <Text style={[styles.subtitle, colorText]}>Posts</Text>
+                <FlatList
+                    data={news}
+                    style={styles.flatList}
+                    contentContainerStyle={styles.contentContainer}
+                    keyExtractor={(item) => item.id_news.toString()}
+                    renderItem={({ item }) => (
+                        <NewCard
+                            id_news={item.id_news}
+                            title={item.title}
+                            id_country={item.id_country}
+                            subtitle={item.subtitle}
+                            body={item.body}
+                            created_at={item.created_at}
+                        />
+                    )}
+                />
+                {userData?.status_account === 1 && (
+                    <Pressable onPress={() => router.push("createNew")} style={styles.buttom}>
+                        <Text style={styles.textB}>Create a New</Text>
+                    </Pressable>
                 )}
-            />
-            
-            {userData?.status_account === 1 && (
-                <Pressable onPress={() => router.push("createNew")} style={styles.buttom}>
-                    <Text style={styles.textB}>Create a New</Text>
-                </Pressable>
-            )}
-        </View>
+            </Screen>
+        </ScrollView>
     )
 }
 
@@ -130,8 +129,6 @@ const styles = StyleSheet.create({
     },
     container: {
         padding: 20,
-        height: '100%',
-        flex: 1 // Importante: permite que el contenedor use flexbox
     },
     title: {
         fontSize: 24,
@@ -141,23 +138,22 @@ const styles = StyleSheet.create({
     detailsContainer: {
         flexDirection: 'row',
         gap: 2,
-        marginBottom: 10
+        marginBottom: 20
     },
     subtitle:{
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 10 // Espacio antes del FlatList
+        marginBottom: 0
     },
     bioContainer:{
         gap: 5,
-        marginBottom: 10
+        marginBottom: 20
     },
     flatList: {
-        flex: 1, // Permite que el FlatList ocupe el espacio restante
-        marginBottom: 80 // Espacio para el botón
+        marginBottom: 80 
     },
     contentContainer: {
-        paddingBottom: 20 // Padding interno del FlatList
+        paddingBottom: 20
     },
     buttom:{
         position: 'absolute',
@@ -166,10 +162,19 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         left: 20,
         bottom: 20,
-        width: '90%', // Cambiado de 100% para que respete el padding
+        width: '90%', 
     },
     textB:{
         color: '#fff',
         textAlign: 'center'
-    }
+    },
+    bgBlack:{
+        backgroundColor: '#121212'
+    },
+    bgWhite:{
+        backgroundColor: '#F1F4F6'
+    },
+    textWhite: {
+        color: '#F1F4F6'
+    },
 })
