@@ -34,6 +34,13 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="createNew"
+        options={{
+          href: null,
+          title: "Create New",
+        }}
+      />
     </Tabs>
   );
 }

@@ -6,7 +6,6 @@ import { Screen } from '../components/Screen'
 import { InputLogin } from '../components/InputLogin'
 
 export default function createNews() {
-
     //uses States
     const [title, setTitle] = useState('');
     const [subtitle, setSubtitle] = useState('');
@@ -14,7 +13,6 @@ export default function createNews() {
     const [id_category, setCategory] = useState(0);
     const [id_country, setCountry] = useState(0);
     const [sources, setSources] = useState('')
-
     const [userData, setUser] = useState(null)
 
     useEffect(() => {
@@ -23,17 +21,12 @@ export default function createNews() {
             const dataUserParse = JSON.parse(dataUser);
             const user = dataUserParse.user.user
             setUser(user);
-
-            console.log('USER PROFILE IS: ', user); // ❌ Usa 'user' no 'userData'
-            
+            console.log('USER PROFILE IS: ', user); 
         };
         fetchData();
     }, []);
-    
-    const createNew = async (title, subtitle, body, id_country, id_category, sources) => { // ❌ Quitaste id_user de los parámetros
-
-        // ❌ 'user' no existe aquí, debe ser 'userData'
-        const id_user = userData?.id_user; // ✅ Usa optional chaining
+    const createNew = async (title, subtitle, body, id_country, id_category, sources) => { 
+        const id_user = userData?.id_user;
 
         if (!id_user) {
             console.log("No user data available");
@@ -49,20 +42,19 @@ export default function createNews() {
                 body: JSON.stringify({title, subtitle, body, id_country, id_category, id_user, sources})
             });
             const data = await response.json();
-            if(!response.ok){ // ❌ Debe ser response.ok, no !response
+            if(!response.ok){ 
                 console.log("Create News Fail", data.message); 
                 console.log(title, subtitle, body, id_country, id_category, id_user, sources)
                 return null;
             }
-            console.log("News Created", data); // ❌ Era "User Created"
-            return data; // ✅ Agrega return
+            console.log("News Created", data); 
+            return data; 
 
         } catch(error) {
             console.error("Network Error", error);
             return null;
         }
     }
-
 
     return (
        <Screen>
@@ -81,22 +73,22 @@ export default function createNews() {
             <InputLogin
                 value={body}
                 onChangeText={setBody}
-                placeholder={'Add body'} // ❌ FALTABA ESTE INPUT
+                placeholder={'Add body'} 
                 secureTextEntry={false}
             />
             <InputLogin
-                value={id_country.toString()} // ❌ Debe ser string para el input
-                onChangeText={(text) => setCountry(Number(text))} // ✅ Convierte a número
+                value={id_country.toString()} 
+                onChangeText={(text) => setCountry(Number(text))} 
                 placeholder={'put a 1'}
                 secureTextEntry={false}
-                keyboardType="numeric" // ✅ Agrega teclado numérico
+                keyboardType="numeric" 
             />
             <InputLogin
-                value={id_category.toString()} // ❌ Debe ser string para el input
-                onChangeText={(text) => setCategory(Number(text))} // ✅ Convierte a número
+                value={id_category.toString()} 
+                onChangeText={(text) => setCategory(Number(text))} 
                 placeholder={'put a 1'}
                 secureTextEntry={false}
-                keyboardType="numeric" // ✅ Agrega teclado numérico
+                keyboardType="numeric" 
             />
             <InputLogin
                 value={sources}

@@ -9,9 +9,7 @@
     "scheme": "veritas",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/splash.png",
     },
     "ios": {
       "supportsTablet": true
