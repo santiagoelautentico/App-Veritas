@@ -59,13 +59,6 @@ const loginFetch = async (email, password, identification) => {
         <>
           <Image source={bgDark} style={styles.bgDarkImage} /> 
             <View style={styles.container}>
-                <View style={styles.imageContainer}>
-                  {
-                    colorScheme === 'light' ? 
-                      <Image source={logoBlack} style={styles.image} /> :
-                      <Image source={logoWhite} style={styles.image} />
-                  }
-                </View>            
               <BlurView 
                 intensity={80} 
                 tint={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -123,8 +116,9 @@ const loginFetch = async (email, password, identification) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     paddingHorizontal: 20,
+    paddingBottom: 80
   },
   header:{
     gap: 5,
@@ -147,8 +141,9 @@ const styles = StyleSheet.create({
   loginContainer:{
     width: '100%',
     gap: 16, 
-    padding: 20,
-    borderRadius: 28
+    padding: 24,
+    overflow: 'hidden',
+    borderRadius: 36,
   },
   title:{
     fontSize: 24,
