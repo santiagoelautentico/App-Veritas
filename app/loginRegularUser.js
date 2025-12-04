@@ -117,9 +117,6 @@ export default function LoginRegularUser() {
             <Text style={[colorText, styles.link]}>Don't have an account? Sign up here.</Text>
           </Pressable>
         </BlurView>
-        <View style={styles.containerBack}>
-          <BackButton href="/" />
-        </View>
       </View>
     </>
   );

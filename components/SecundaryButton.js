@@ -1,29 +1,37 @@
-import {Pressable, Touchable, Text, StyleSheet} from 'react-native';
+import {Pressable, Text, StyleSheet, useColorScheme} from 'react-native';
 import { useRouter } from 'expo-router';
 
 export function SecundaryButton({title, href}) {
     const router = useRouter();
+    const colorScheme = useColorScheme();
+    const borderButtonColor = colorScheme === 'dark' ? styles.borderColorYellow : styles.borderColorBlue
+    const titleButton = colorScheme === 'dark' ? styles.DarkButton : styles.whiteButton
     return (
         <Pressable
             onPress={() => {
                 router.push(href)}
             }
-            style={styles.button}
+            style={[styles.button, borderButtonColor]}
         >
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, titleButton]}>{title}</Text>
         </Pressable>
     )
 }
 
 const styles = StyleSheet.create({
-    title: {
+    whiteButton:{
         color: '#333A3F',
+    },
+    DarkButton:{
+        color: '#F1F4F6',
+    },
+    title: {
         fontSize: 16,
         fontWeight: 'bold',
     },
-    button: {
+    borderColorYellow: {
         borderWidth: 2,
-        borderColor: '#0F4C81',
+        borderColor: '#FFC857',
         borderRadius: 28,
         justifyContent: 'center',
         alignItems: 'center',

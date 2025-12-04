@@ -23,7 +23,7 @@ export default function TabsLayout() {
           fontWeight: '600',
           color: textColor
         },
-        headerShadowVisible: false, // Quita la sombra
+        headerShadowVisible: false,
         tabBarStyle: {
           backgroundColor: bgColor,
         },

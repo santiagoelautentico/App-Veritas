@@ -1,6 +1,6 @@
+import { useColorScheme, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View } from "react-native";
-import { useColorScheme } from 'react-native';
+SafeAreaView
 
 export function Screen({ children }) {
   const colorScheme = useColorScheme()
