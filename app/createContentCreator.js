@@ -6,14 +6,16 @@ import {
   ScrollView,
   useColorScheme,
   Image,
+  Alert,
 } from "react-native";
 import { useState } from "react";
-import { API_URL } from "../constants/api";
+import { API_URL, URL_NETWORK } from "../constants/api";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bgDark from "../assets/bgAppDark.png";
 import { InputLogin } from "../components/InputLogin";
 import { BlurView } from "expo-blur";
+import * as ImagePicker from "expo-image-picker";
 
 export default function createContentCreator() {
   const router = useRouter();
@@ -36,6 +38,37 @@ export default function createContentCreator() {
   const [type_of_journalist, setTypeOfJournalist] = useState("");
   const [identification, setIdentification] = useState("");
   const [biography, setBiography] = useState("");
+  const [imageUri, setImageUri] = useState(null);
+  const [imageBase64, setImageBase64] = useState(null);
+
+  const pickImage = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== "granted") {
+        Alert.alert("Permiso denegado", "Necesitamos acceso a tus fotos");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.Images,
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 0.7,
+        base64: true,
+      });
+
+      if (!result.canceled) {
+        setImageUri(result.assets[0].uri);
+        setImageBase64(`data:image/jpeg;base64,${result.assets[0].base64}`);
+        console.log("Imagen seleccionada");
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+      Alert.alert("Error", "No se pudo seleccionar la imagen");
+    }
+  };
 
   const createCreatorFetch = async (
     name_user,
@@ -50,9 +83,11 @@ export default function createContentCreator() {
     identification,
     biography
   ) => {
+    console.log("¿Tiene imagen?", !!imageBase64);
+    console.log("Tamaño del base64:", imageBase64?.length);
     await AsyncStorage.removeItem("authToken");
     try {
-      const response = await fetch(`${API_URL}registerContentCreator`, {
+      const response = await fetch(`${URL_NETWORK}registerContentCreator`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,6 +104,7 @@ export default function createContentCreator() {
           type_of_journalist,
           identification,
           biography,
+          ...(imageBase64 && { picture: imageBase64 }),
         }),
       });
       const data = await response.json();
@@ -218,6 +254,31 @@ export default function createContentCreator() {
               secureTextEntry={true}
             />
           </View>
+          <View style={styles.containerInput}>
+            <Text style={[colorText, styles.titleInput]}>
+              Cover image (optional)
+            </Text>
+
+            <Pressable style={styles.imageButton} onPress={pickImage}>
+              <Text style={styles.imageButtonText}>📷 Select from Gallery</Text>
+            </Pressable>
+            {imageUri && (
+              <View style={styles.imagePreview}>
+                <Image source={{ uri: imageUri }} style={styles.image} />
+                <Pressable
+                  style={styles.removeButton}
+                  onPress={() => {
+                    setImageUri(null);
+                    setImageBase64(null);
+                  }}
+                >
+                  <Text style={styles.removeButtonText}>✕ Remove Image</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
+
+          <View style={{ height: 100 }} />
         </BlurView>
       </ScrollView>
       <Pressable
@@ -266,7 +327,7 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     overflow: "hidden",
     marginBottom: 112,
-    marginTop: 50
+    marginTop: 50,
   },
   title: {
     fontSize: 24,
@@ -318,5 +379,39 @@ const styles = StyleSheet.create({
   textButton: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  imageButton: {
+    backgroundColor: "#E8F5E9",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#4CAF50",
+  },
+  imageButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#2E7D32",
+  },
+  imagePreview: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  removeButton: {
+    backgroundColor: "#FF3B30",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  removeButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 12,
   },
 });

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   FlatList,
+  Image,
   ScrollView,
   useColorScheme,
 } from "react-native";
@@ -12,7 +13,7 @@ import CloseSession from "../../components/CloseSession";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CountryProfile from "../../components/CountryProfile";
 import { useRouter } from "expo-router";
-import { API_URL } from "../../constants/api";
+import { API_URL, URL_NETWORK } from "../../constants/api";
 import NewCard from "../../components/newsCard";
 import { Screen } from "../../components/Screen";
 
@@ -55,7 +56,7 @@ export default function profile() {
       const token = await AsyncStorage.getItem("authToken");
       console.log("token guardado ahora en news", token);
       const response = await fetch(
-        `${API_URL}news/profileNews/${userData.id_user}`,
+        `${URL_NETWORK}news/profileNews/${userData.id_user}`,
         {
           method: "GET",
           headers: {
@@ -66,7 +67,7 @@ export default function profile() {
       );
 
       const data = await response.json();
-      // console.log('data recibida del API:', data); // Log de lo que llega
+      console.log("data recibida del API:", data); // Log de lo que llega
       setNews(data.news);
     } catch (error) {
       console.error("Error to get News", error);
@@ -79,11 +80,11 @@ export default function profile() {
       console.log("Estado de news actualizado:", news);
       getNews();
     }
-  }, [userData]); // Se ejecuta cada vez que userData cambia
+  }, [userData]);
 
   useEffect(() => {
     console.log("Estado de news actualizado:", news);
-  }, [news]); // Solo para hacer log cuando news cambie
+  }, [news]); 
 
   return (
     <View style={[styles.container, bgStyle]}>
@@ -100,6 +101,13 @@ export default function profile() {
               <CountryProfile />
             </View>
             <View>
+              {userData?.picture && (
+                <Image
+                  source={{ url: userData?.picture }}
+                  style={styles.profileImage}
+                  resizeMode="cover"
+                />
+              )}
               <Text style={[styles.title, colorText]}>
                 {userData?.username}
               </Text>
@@ -127,9 +135,16 @@ export default function profile() {
             body={item.body}
             created_at={item.created_at}
             picture_url={item.picture_url}
+            username={item.username}
+            type_of_journalist={item.type_of_journalist}
+            picture={item.picture}
           />
         )}
-        ListEmptyComponent={<Text style={[styles.text, colorText]}>You dont have news yet, Create a notice clicking the bottom bellow</Text>}
+        ListEmptyComponent={
+          <Text style={[styles.text, colorText]}>
+            You dont have news yet, Create a notice clicking the bottom bellow
+          </Text>
+        }
       />
 
       {userData?.status_account === 1 && (
@@ -152,10 +167,10 @@ const styles = StyleSheet.create({
     paddingInline: 20,
     flex: 1,
   },
-  text:{
+  text: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 5
+    fontWeight: "bold",
+    marginTop: 5,
   },
   title: {
     fontSize: 24,
@@ -208,5 +223,10 @@ const styles = StyleSheet.create({
   },
   textB: {
     fontWeight: "bold",
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
   },
 });

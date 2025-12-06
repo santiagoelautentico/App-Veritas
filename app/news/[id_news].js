@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, useColorScheme, Image } from "react-native";
 import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { API_URL } from "../../constants/api";
+import { API_URL, URL_NETWORK } from "../../constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function DetailNews() {
@@ -24,7 +24,7 @@ export default function DetailNews() {
     try {
       const token = await AsyncStorage.getItem("authToken");
       console.log("token guardado ahora en news", token);
-      const response = await fetch(`${API_URL}news/${idNews}`, {
+      const response = await fetch(`${URL_NETWORK}news/${idNews}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

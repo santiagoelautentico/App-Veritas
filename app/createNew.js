@@ -9,7 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { API_URL } from "../constants/api";
+import { API_URL, URL_NETWORK } from "../constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { Screen } from "../components/Screen";
@@ -92,7 +92,7 @@ export default function createNews() {
     }
 
     try {
-      const response = await fetch(`${API_URL}news/createNew`, {
+      const response = await fetch(`${URL_NETWORK}news/createNew`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,9 @@ export default function createNews() {
           id_user,
           sources,
           ...(imageBase64 && { picture: imageBase64 }),
+          
         }),
+        
       });
       const data = await response.json();
       if (!response.ok) {
@@ -123,6 +125,7 @@ export default function createNews() {
         return null;
       }
       console.log("News Created", data);
+      
       return data;
     } catch (error) {
       console.error("Network Error", error);

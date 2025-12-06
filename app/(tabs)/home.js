@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, View, Text, useColorScheme } from "react-native";
 import { useState, useEffect } from "react";
-import { API_URL } from "../../constants/api";
+import { API_URL, URL_NETWORK } from "../../constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { Screen } from "../../components/Screen";
@@ -32,7 +32,7 @@ export default function Home() {
     try {
       const token = await AsyncStorage.getItem("authToken");
       console.log("token guardado ahora en news", token);
-      const response = await fetch(`${API_URL}news`, {
+      const response = await fetch(`${URL_NETWORK}news`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

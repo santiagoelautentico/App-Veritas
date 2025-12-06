@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import {View, Text, StyleSheet, Pressable, useColorScheme, Image} from 'react-native';
 import { BlurView } from 'expo-blur';
-import { API_URL } from '../constants/api';
+import { API_URL, URL_NETWORK} from '../constants/api';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -28,7 +28,7 @@ const loginFetch = async (email, password, identification) => {
   await AsyncStorage.removeItem("authToken");
 
   try {
-    const response = await fetch(`${API_URL}loginUserCreator`, {
+    const response = await fetch(`${URL_NETWORK}loginUserCreator`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

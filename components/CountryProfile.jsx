@@ -1,14 +1,19 @@
-import { View, Text } from "react-native";
+import { View, Text, useColorScheme, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "../constants/api";
+import { API_URL, URL_NETWORK } from "../constants/api";
 
 export default function CountryProfile() {
+  const colorScheme = useColorScheme();
+
+  const colorText =
+    colorScheme === "light" ? styles.textBlack : styles.textWhite;
+
   const [countries, setCountries] = useState([]);
   const [userCountryName, setUserCountryName] = useState("");
   const fetchCountries = async () => {
     try {
-      const response = await fetch(`${API_URL}countries`, {
+      const response = await fetch(`${URL_NETWORK}countries`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -33,7 +38,7 @@ export default function CountryProfile() {
       const userCountryId = Number(userData.user.user.id_country);
       console.log("User country id:", userCountryId);
       const country = countries.find(
-        c => Number(c.id_country) === userCountryId
+        (c) => Number(c.id_country) === userCountryId
       );
       if (country) {
         setUserCountryName(country.name_country);
@@ -52,7 +57,13 @@ export default function CountryProfile() {
       getUserCountry();
     }
   }, [countries]);
-  return (
-      <Text>Country: {userCountryName}</Text>
-  );
+  return <Text style={colorText}>Country: {userCountryName}</Text>;
 }
+const styles = StyleSheet.create({
+  textWhite: {
+    color: "#F1F4F6",
+  },
+  textBlack: {
+    color: "#121212",
+  },
+});

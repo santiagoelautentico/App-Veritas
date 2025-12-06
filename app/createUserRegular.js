@@ -4,13 +4,16 @@ import {
   StyleSheet,
   Pressable,
   Image,
+  Alert,
   useColorScheme,
+  ScrollView
 } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
-import { API_URL } from "../constants/api";
+import { API_URL, URL_NETWORK } from "../constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from "expo-image-picker";
 
 import { InputLogin } from "../components/InputLogin";
 import bgDark from "../assets/bgAppDark.png";
@@ -30,6 +33,37 @@ export default function createUserRegular() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [id_country, setCountry] = useState("");
+  const [imageUri, setImageUri] = useState(null);
+  const [imageBase64, setImageBase64] = useState(null);
+
+  const pickImage = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== "granted") {
+        Alert.alert("Permiso denegado", "Necesitamos acceso a tus fotos");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.Images,
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 0.7,
+        base64: true,
+      });
+
+      if (!result.canceled) {
+        setImageUri(result.assets[0].uri);
+        setImageBase64(`data:image/jpeg;base64,${result.assets[0].base64}`);
+        console.log("Imagen seleccionada");
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+      Alert.alert("Error", "No se pudo seleccionar la imagen");
+    }
+  };
 
   const createAccountFetch = async (
     name_user,
@@ -39,9 +73,11 @@ export default function createUserRegular() {
     password,
     id_country
   ) => {
+    console.log("¿Tiene imagen?", !!imageBase64);
+    console.log("Tamaño del base64:", imageBase64?.length);
     await AsyncStorage.removeItem("authToken");
     try {
-      const response = await fetch(`${API_URL}registerRegularUser`, {
+      const response = await fetch(`${URL_NETWORK}registerRegularUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,6 +89,7 @@ export default function createUserRegular() {
           email,
           password,
           id_country,
+          ...(imageBase64 && { picture: imageBase64 }),
         }),
       });
       const data = await response.json();
@@ -72,7 +109,7 @@ export default function createUserRegular() {
   return (
     <>
       <Image source={bgDark} style={styles.bgDarkImage} />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <BlurView
           intensity={80}
           tint={colorScheme === "dark" ? "dark" : "light"}
@@ -140,6 +177,28 @@ export default function createUserRegular() {
               secureTextEntry={false}
             />
           </View>
+          <View style={styles.containerInput}>
+            <Text style={[colorText, styles.titleInput]}>
+              Cover image (optional)
+            </Text>
+            <Pressable style={styles.imageButton} onPress={pickImage}>
+              <Text style={styles.imageButtonText}>📷 Select from Gallery</Text>
+            </Pressable>
+            {imageUri && (
+              <View style={styles.imagePreview}>
+                <Image source={{ uri: imageUri }} style={styles.image} />
+                <Pressable
+                  style={styles.removeButton}
+                  onPress={() => {
+                    setImageUri(null);
+                    setImageBase64(null);
+                  }}
+                >
+                  <Text style={styles.removeButtonText}>✕ Remove Image</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
           <Pressable
             style={[styles.button, bgButton]}
             onPress={async () => {
@@ -157,7 +216,7 @@ export default function createUserRegular() {
             <Text style={styles.textButton}>Create Acount</Text>
           </Pressable>
         </BlurView>
-      </View>
+      </ScrollView>
     </>
   );
 }
@@ -165,9 +224,8 @@ export default function createUserRegular() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-end",
-    paddingBottom: 80,
     paddingHorizontal: 20,
+    paddingTop: 110
   },
   bgDarkImage: {
     position: "absolute",

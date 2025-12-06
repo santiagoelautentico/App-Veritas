@@ -9,7 +9,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { BlurView } from "expo-blur";
-import { API_URL } from "../constants/api";
+import { API_URL, URL_NETWORK } from "../constants/api";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -33,7 +33,7 @@ export default function LoginRegularUser() {
     await AsyncStorage.removeItem("authToken");
 
     try {
-      const response = await fetch(`${API_URL}loginUser`, {
+      const response = await fetch(`${URL_NETWORK}loginUser`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
