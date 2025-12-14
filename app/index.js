@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { jwtDecode } from "jwt-decode";
 import { useColorScheme } from 'react-native';
+import { CommonActions } from "@react-navigation/native";
 
 // Import Images
 import logoWhite from '../assets/logoStartWhite.png';

@@ -285,4 +285,38 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
   },
+    imageButton: {
+    backgroundColor: "#E8F5E9",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#4CAF50",
+  },
+  imageButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#2E7D32",
+  },
+  imagePreview: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  removeButton: {
+    backgroundColor: "#FF3B30",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  removeButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 12,
+  },
 });

@@ -5,8 +5,8 @@ import {
   Pressable,
   FlatList,
   Image,
-  ScrollView,
   useColorScheme,
+  Touchable,
 } from "react-native";
 import { useEffect, useState } from "react";
 import CloseSession from "../../components/CloseSession";
@@ -15,7 +15,7 @@ import CountryProfile from "../../components/CountryProfile";
 import { useRouter } from "expo-router";
 import { API_URL, URL_NETWORK } from "../../constants/api";
 import NewCard from "../../components/newsCard";
-import { Screen } from "../../components/Screen";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function profile() {
   const colorScheme = useColorScheme();
@@ -67,7 +67,7 @@ export default function profile() {
       );
 
       const data = await response.json();
-      console.log("data recibida del API:", data); // Log de lo que llega
+      console.log("data recibida del API:", data);
       setNews(data.news);
     } catch (error) {
       console.error("Error to get News", error);
@@ -84,7 +84,7 @@ export default function profile() {
 
   useEffect(() => {
     console.log("Estado de news actualizado:", news);
-  }, [news]); 
+  }, [news]);
 
   return (
     <View style={[styles.container, bgStyle]}>
@@ -94,13 +94,14 @@ export default function profile() {
         keyExtractor={(item) => item.id_news.toString()}
         ListHeaderComponent={() => (
           <>
-            <View style={styles.buttomClose}>
+            <View style={styles.empty}></View>
+            {/* <View style={styles.buttomClose}>
               <CloseSession />
             </View>
             <View>
               <CountryProfile />
-            </View>
-            <View>
+            </View> */}
+            <View style={styles.header}>
               {userData?.picture && (
                 <Image
                   source={{ url: userData?.picture }}
@@ -108,20 +109,26 @@ export default function profile() {
                   resizeMode="cover"
                 />
               )}
-              <Text style={[styles.title, colorText]}>
-                {userData?.username}
-              </Text>
-              <View style={styles.detailsContainer}>
-                <Text style={colorText}>Ocupation: {userData?.ocupation}</Text>
-                <Text style={colorText}>-</Text>
-                <Text style={colorText}>
-                  Type of journalist: {userData?.type_of_journalist}
-                </Text>
+
+              <View style={styles.rigthHeaderContainer}>
+                <View style={styles.topHeader}>
+                  <Text style={[styles.title, colorText]}>
+                    {userData?.username}
+                  </Text>
+                  <Pressable onPress={() => router.push("configScreen")}>
+                    <Ionicons name="home" size={20} color={"white"} />
+                  </Pressable>
+                </View>
+                <View style={styles.detailsContainer}>
+                  <Text style={colorText}>{userData?.ocupation}</Text>
+                  <Text style={colorText}>-</Text>
+                  <Text style={colorText}>{userData?.type_of_journalist}</Text>
+                </View>
               </View>
-              <View style={[styles.bioContainer, colorText]}>
-                <Text style={[styles.subtitle, colorText]}>Biography</Text>
-                <Text style={colorText}>{userData?.biography}</Text>
-              </View>
+            </View>
+            <View style={[styles.bioContainer, colorText]}>
+              <Text style={[styles.subtitle, colorText]}>Biography</Text>
+              <Text style={colorText}>{userData?.biography}</Text>
             </View>
             <Text style={[styles.subtitle, colorText]}>Posts</Text>
           </>
@@ -131,6 +138,7 @@ export default function profile() {
             id_news={item.id_news}
             title={item.title}
             id_country={item.id_country}
+            category={item.id_category}
             subtitle={item.subtitle}
             body={item.body}
             created_at={item.created_at}
@@ -160,9 +168,6 @@ export default function profile() {
 }
 
 const styles = StyleSheet.create({
-  buttomClose: {
-    marginTop: 60,
-  },
   container: {
     paddingInline: 20,
     flex: 1,
@@ -179,7 +184,9 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     flexDirection: "row",
+    width: "100%",
     gap: 2,
+    flexWrap: "wrap",
   },
   subtitle: {
     fontSize: 16,
@@ -202,7 +209,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: "#fff5d3ff",
     position: "absolute",
-    bottom: 5, // Distancia del borde inferior
+    bottom: 90, // Distancia del borde inferior
     alignSelf: "center", // ⬅️ Centra horizontalmente
     maxWidth: 400, // ⬅️ Ancho máximo
   },
@@ -225,8 +232,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   profileImage: {
-    width: 50,
-    height: 50,
+    width: 80,
+    height: 80,
     borderRadius: 100,
+  },
+  empty: {
+    height: 70,
+    width: "100%",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingBottom: 20,
+  },
+  rigthHeaderContainer: {
+    flex: 1,
+  },
+  topHeader: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

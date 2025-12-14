@@ -14,9 +14,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { Screen } from "../components/Screen";
 import { InputLogin } from "../components/InputLogin";
+import { InputBody } from "../components/InputBody";
+import { useRouter } from "expo-router";
 
 export default function createNews() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
 
   const bgButton =
     colorScheme === "light" ? styles.bgButtonBlue : styles.bgButtonYellow;
@@ -106,9 +109,7 @@ export default function createNews() {
           id_user,
           sources,
           ...(imageBase64 && { picture: imageBase64 }),
-          
         }),
-        
       });
       const data = await response.json();
       if (!response.ok) {
@@ -125,12 +126,54 @@ export default function createNews() {
         return null;
       }
       console.log("News Created", data);
-      
+
       return data;
     } catch (error) {
       console.error("Network Error", error);
       return null;
     }
+  };
+
+  const handleAlert = async () => {
+    Alert.alert(
+      "Create News",
+      "Are you sure you want to create this news?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Create",
+          onPress: async () => {
+            setLoading(true);
+            const data = await createNew(
+              title,
+              subtitle,
+              body,
+              id_country,
+              id_category,
+              sources
+            );
+            setLoading(false);
+
+            if (data) {
+              Alert.alert("Success", "News created successfully", [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    router.push(`/news/${data.news.id_news}`);
+                  },
+                },
+              ]);
+            } else {
+              Alert.alert("Error", "Failed to create news");
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
   return (
     <Screen>
@@ -157,11 +200,17 @@ export default function createNews() {
           <Text style={[colorText, styles.titleInput]}>
             Add the body of the news
           </Text>
-          <InputLogin
+          <InputBody
             value={body}
             onChangeText={setBody}
-            placeholder={"Add body"}
+            placeholder="Escribe el contenido...
+  
+Usa Markdown:
+# Título grande
+## Subtítulo
+**Negrita** *Cursiva*"
             secureTextEntry={false}
+            showPreview={true}
           />
         </View>
         <View style={styles.containerInput}>
@@ -228,17 +277,7 @@ export default function createNews() {
 
       <Pressable
         style={[styles.button, bgButton]}
-        onPress={async () => {
-          const data = await createNew(
-            title,
-            subtitle,
-            body,
-            id_country,
-            id_category,
-            sources
-          );
-          console.log("response from server", data);
-        }}
+        onPress={() => handleAlert()}
       >
         <Text style={styles.textButton}>Create News</Text>
       </Pressable>
@@ -284,7 +323,7 @@ const styles = StyleSheet.create({
   containerScroll: {
     gap: 10,
     paddingInline: 20,
-    paddingTop: 110,
+    paddingTop: 125,
   },
   textWhite: {
     color: "#F1F4F6",

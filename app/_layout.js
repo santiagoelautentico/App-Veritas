@@ -30,8 +30,11 @@ export default function RootLayout() {
         <Stack.Screen
           name="(tabs)"
           options={{
-            headerShown: true,
             headerBackVisible: false,
+            headerLeft: () => null,
+            gestureEnabled: false,
+            headerShown: true,
+            color: "black",
             headerTitle: () => (
               <Image
                 source={IconHeaderWhite}
@@ -107,7 +110,7 @@ export default function RootLayout() {
           name="createNew"
           options={{
             headerShown: true,
-            headerTitle: 'Create a new'
+            headerTitle: "Create a new",
           }}
         />
       </Stack>

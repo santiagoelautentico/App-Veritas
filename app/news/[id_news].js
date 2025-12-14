@@ -1,8 +1,16 @@
-import { View, Text, StyleSheet, useColorScheme, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  useColorScheme,
+  Image,
+  ScrollView,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { API_URL, URL_NETWORK } from "../../constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Markdown from "react-native-markdown-display";
 
 export default function DetailNews() {
   //consts
@@ -12,6 +20,44 @@ export default function DetailNews() {
   const colorScheme = useColorScheme();
   const textColor =
     colorScheme === "light" ? styles.blackText : styles.whiteText;
+
+  const markdownStyles = {
+    body: {
+      color: colorScheme === "light" ? "#333A3F" : "#F1F4F6",
+    },
+    heading1: {
+      fontSize: 24,
+      fontWeight: "bold",
+      marginBottom: 10,
+      color: colorScheme === "light" ? "#333A3F" : "#F1F4F6",
+    },
+    heading2: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 8,
+      color: colorScheme === "light" ? "#333A3F" : "#F1F4F6",
+    },
+    heading3: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 6,
+      color: colorScheme === "light" ? "#333A3F" : "#F1F4F6",
+    },
+    paragraph: {
+      marginBottom: 10,
+      color: colorScheme === "light" ? "#333A3F" : "#F1F4F6",
+      lineHeight: 22,
+    },
+    text: {
+      color: colorScheme === "light" ? "#333A3F" : "#F1F4F6",
+    },
+    strong: {
+      fontWeight: "bold",
+    },
+    em: {
+      fontStyle: "italic",
+    },
+  };
 
   const haveToken = async () => {
     const token = await AsyncStorage.getItem("authToken");
@@ -65,8 +111,8 @@ export default function DetailNews() {
   }).format(date);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <ScrollView style={styles.container}>
+      {/* <View style={styles.header}>
         <View style={styles.leftSide}>
           <Image
             source={{ url: newsData.picture }}
@@ -83,14 +129,36 @@ export default function DetailNews() {
           </View>
         </View>
         <Text style={[textColor, styles.date]}>{formattedDate}</Text>
+      </View> */}
+      <View style={styles.headerNews}>
+        {newsData.picture && (
+          <Image
+            source={{ url: newsData.picture }}
+            style={styles.profileImage}
+            resizeMode="cover"
+          />
+        )}
+        <View>
+          <View style={styles.rigthtopHeader}>
+            <Text key={newsData?.id_user} style={[textColor, styles.username]}>
+              {newsData.username}
+            </Text>
+            <View style={styles.point}></View>
+            <Text style={[textColor, styles.date]}>{formattedDate}</Text>
+          </View>
+          <Text style={[textColor, styles.typeJor]}>
+            {newsData.type_of_journalist}
+          </Text>
+        </View>
       </View>
       <Image source={{ uri: newsData.picture_url }} style={styles.picture} />
-      <View style={styles.headerNews}>
+      <View style={styles.titleNews}>
         <Text style={[styles.title, textColor]}>{newsData.title}</Text>
         <Text style={[styles.subtitle, textColor]}>{[newsData.subtitle]}</Text>
       </View>
-      <Text style={textColor}>{newsData.body}</Text>
-    </View>
+      <Markdown style={markdownStyles}>{newsData.body}</Markdown>
+      <View style={styles.empty}></View>
+    </ScrollView>
   );
 }
 
@@ -98,19 +166,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingInline: 20,
-    paddingBlock: 110,
-    gap: 20,
+    paddingBlock: 120,
   },
   headerNews: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
+    alignItems: 'center'
+  },
+  titleNews: {
     gap: 5,
   },
   title: {
     fontSize: 21,
     fontWeight: "bold",
+    marginBottom: 1,
   },
   subtitle: {
     fontSize: 16,
-    opacity: 0.7,
+    opacity: 0.8,
+    marginBottom: 20,
   },
   whiteText: {
     color: "#F1F4F6",
@@ -118,7 +193,7 @@ const styles = StyleSheet.create({
   blackText: {
     color: "#333A3F",
   },
-  profileImg: {
+  profileImage: {
     width: 50,
     height: 50,
     borderRadius: 100,
@@ -126,25 +201,42 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     gap: 10,
+    marginBottom: 20,
   },
   leftSide: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   username: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  opacityText: {
+  typeJor: {
     opacity: 0.8,
+  },
+  country: {
+    opacity: 0.8,
+    marginTop: 10,
   },
   picture: {
     width: "100%",
     height: 200,
     borderRadius: 28,
+    marginBottom: 20,
   },
-  date: {
-    marginTop: 10
-  }
+  empty: {
+    height: 50,
+    flex: 1,
+  },
+  rigthtopHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  point: {
+    width: 5,
+    height: 5,
+    backgroundColor: "#F1F4F6",
+  },
 });

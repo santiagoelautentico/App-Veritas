@@ -74,6 +74,7 @@ export default function Home() {
                 username={item.username}
                 type_of_journalist={item.type_of_journalist}
                 picture={item.picture}
+                category={item.id_category}
               />
             )}
           />
@@ -88,7 +89,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {},
   contentContainer: {
-    paddingTop: 40,
+    paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 100,
   },
