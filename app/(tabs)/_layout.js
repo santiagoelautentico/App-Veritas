@@ -9,6 +9,7 @@ export default function TabsLayout() {
   const bgColor = colorScheme === "light" ? "#F1F4F6" : "#121212";
   const textColor = colorScheme === "light" ? "#333A3F" : "#F1F4F6";
   const colorTambs = colorScheme === "dark" ? "#FFC857" : "#0F4C81";
+  const colorIcon = colorScheme === "dark" ? "#f1f4f69e" : "#121212";
 
   return (
     <Tabs
@@ -35,7 +36,7 @@ export default function TabsLayout() {
         },
         tabBarBackground: () => (
           <BlurView
-            intensity={80}
+            intensity={90}
             tint={colorScheme === "light" ? "light" : "dark"}
             style={{
               ...StyleSheet.absoluteFillObject,
@@ -53,7 +54,7 @@ export default function TabsLayout() {
         name="categories"
         options={{
           tabBarActiveTintColor: colorTambs,
-          tabBarInactiveTintColor: "#999",
+          tabBarInactiveTintColor: colorIcon,
           headerTitleStyle: { color: colorTambs, fontWeight: "600" },
           headerTintColor: colorTambs,
           tabBarIcon: ({ color, size }) => (
@@ -65,7 +66,7 @@ export default function TabsLayout() {
         name="home"
         options={{
           tabBarActiveTintColor: colorTambs,
-          tabBarInactiveTintColor: "#999",
+          tabBarInactiveTintColor: colorIcon,
           headerTitleStyle: { color: colorTambs, fontWeight: "600" },
           headerTintColor: colorTambs,
           tabBarIcon: ({ color, size }) => (
@@ -77,7 +78,7 @@ export default function TabsLayout() {
         name="profile"
         options={{
           tabBarActiveTintColor: colorTambs,
-          tabBarInactiveTintColor: "#999",
+          tabBarInactiveTintColor: colorIcon,
           headerTitleStyle: { color: colorTambs, fontWeight: "600" },
           headerTintColor: colorTambs,
           tabBarIcon: ({ color, size }) => (

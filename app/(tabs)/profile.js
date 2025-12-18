@@ -16,18 +16,22 @@ import { useRouter } from "expo-router";
 import { API_URL, URL_NETWORK } from "../../constants/api";
 import NewCard from "../../components/newsCard";
 import { Ionicons } from "@expo/vector-icons";
+import Fontisto from "@expo/vector-icons/Fontisto";
 
 export default function profile() {
   const colorScheme = useColorScheme();
   const router = useRouter();
   const [userData, setUser] = useState("");
+  const [fetchDataUser, setFetchDataUser] = useState("");
   const [news, setNews] = useState([]);
   const bgStyle = colorScheme === "light" ? styles.bgWhite : styles.bgBlack;
   const colorText =
     colorScheme === "light" ? styles.textBlack : styles.textWhite;
   const bgButton =
     colorScheme === "light" ? styles.bgButtonBlue : styles.bgButtonYellow;
-
+  const txtButton =
+    colorScheme === "light" ? styles.textWhite : styles.TextBlack;
+  const icon = colorScheme === "light" ? "#333A3F" : "#f1f4f6";
   useEffect(() => {
     const fetchData = async () => {
       const dataUser = await AsyncStorage.getItem("dataUser");
@@ -73,12 +77,32 @@ export default function profile() {
       console.error("Error to get News", error);
     }
   };
+  const getUser = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      console.log("token guardado ahora en news", token);
+      const response = await fetch(`${URL_NETWORK}users/${userData.id_user}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      console.log("data recibida del API papapaa:", data);
+      setFetchDataUser(data.user);
+    } catch (error) {
+      console.error("Error to get News", error);
+    }
+  };
   useEffect(() => {
     haveToken();
     if (userData?.id_user) {
       console.log("Llamando getNews con id:", userData.id_user);
       console.log("Estado de news actualizado:", news);
       getNews();
+      getUser();
     }
   }, [userData]);
 
@@ -95,12 +119,6 @@ export default function profile() {
         ListHeaderComponent={() => (
           <>
             <View style={styles.empty}></View>
-            {/* <View style={styles.buttomClose}>
-              <CloseSession />
-            </View>
-            <View>
-              <CountryProfile />
-            </View> */}
             <View style={styles.header}>
               {userData?.picture && (
                 <Image
@@ -116,8 +134,18 @@ export default function profile() {
                     {userData?.username}
                   </Text>
                   <Pressable onPress={() => router.push("configScreen")}>
-                    <Ionicons name="home" size={20} color={"white"} />
+                    <Fontisto
+                      name="player-settings"
+                      size={20}
+                      color={icon}
+                    />
                   </Pressable>
+                </View>
+                <View style={styles.containerCompany}>
+                  <Text style={[colorText, styles.span]}>Work in: </Text>
+                  <Text style={[colorText, styles.company]}>
+                    {userData?.company}
+                  </Text>
                 </View>
                 <View style={styles.detailsContainer}>
                   <Text style={colorText}>{userData?.ocupation}</Text>
@@ -155,12 +183,16 @@ export default function profile() {
         }
       />
 
-      {userData?.status_account === 1 && (
+      {fetchDataUser?.status_account === 1 && (
         <Pressable
           onPress={() => router.push("createNew")}
-          style={[styles.button, bgButton]}
+          style={({ pressed }) => [
+            styles.button,
+            bgButton,
+            pressed && styles.buttonCreatePressed,
+          ]}
         >
-          <Text style={styles.textB}>Create a New</Text>
+          <Text style={[styles.textB, txtButton]}>Create a New</Text>
         </Pressable>
       )}
     </View>
@@ -253,5 +285,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
+  },
+  span: {
+    fontSize: 14,
+    opacity: 0.7,
+  },
+  company: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  containerCompany: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 2,
+  },
+  buttonCreatePressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
+  },
+  bgButtonBlue: {
+    backgroundColor: "#0F4C81",
   },
 });

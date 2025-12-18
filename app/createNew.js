@@ -16,6 +16,7 @@ import { Screen } from "../components/Screen";
 import { InputLogin } from "../components/InputLogin";
 import { InputBody } from "../components/InputBody";
 import { useRouter } from "expo-router";
+import Dropdown from "../components/Dropdown";
 
 export default function createNews() {
   const colorScheme = useColorScheme();
@@ -26,18 +27,35 @@ export default function createNews() {
 
   const colorText =
     colorScheme === "dark" ? styles.textWhite : styles.TextBlack;
+    const txtButton = colorScheme === 'light' ? styles.textWhite : styles.TextBlack;
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [body, setBody] = useState("");
   const [id_category, setCategory] = useState(0);
-  const [id_country, setCountry] = useState(0);
+  const [id_country, setIdCountry] = useState("");
   const [sources, setSources] = useState("");
   const [userData, setUser] = useState(null);
 
   const [imageUri, setImageUri] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const COUNTRIES = [
+    { id: 1, name: "Uruguay" },
+    { id: 2, name: "USA" },
+    { id: 3, name: "Argentina" },
+    { id: 4, name: "Brazil" },
+    { id: 5, name: "Puerto Rico" },
+  ];
+  const CATEGORIES = [
+    { id: 6, name: "Anime" },
+    { id: 2, name: "Economy" },
+    { id: 5, name: "Medicine" },
+    { id: 1, name: "Policy" },
+    { id: 3, name: "Pop Culture" },
+    { id: 4, name: "Sports" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -215,24 +233,22 @@ Usa Markdown:
         </View>
         <View style={styles.containerInput}>
           <Text style={[colorText, styles.titleInput]}>Select the country</Text>
-          <InputLogin
-            value={id_country.toString()}
-            onChangeText={(text) => setCountry(Number(text))}
-            placeholder={"put a 1"}
-            secureTextEntry={false}
-            keyboardType="numeric"
+          <Dropdown
+            value={id_country}
+            onChange={setIdCountry}
+            options={COUNTRIES}
+            placeholder="Select a country..."
           />
         </View>
         <View style={styles.containerInput}>
           <Text style={[colorText, styles.titleInput]}>
             Select the category
           </Text>
-          <InputLogin
-            value={id_category.toString()}
-            onChangeText={(text) => setCategory(Number(text))}
-            placeholder={"put a 1"}
-            secureTextEntry={false}
-            keyboardType="numeric"
+          <Dropdown
+            value={id_category}
+            onChange={setCategory}
+            options={CATEGORIES}
+            placeholder="Select a category..."
           />
         </View>
         <View style={styles.containerInput}>
@@ -251,7 +267,13 @@ Usa Markdown:
             Cover image (optional)
           </Text>
 
-          <Pressable style={styles.imageButton} onPress={pickImage}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.imageButton,
+              pressed && styles.imageButtonPressed,
+            ]}
+            onPress={pickImage}
+          >
             <Text style={styles.imageButtonText}>📷 Select from Gallery</Text>
           </Pressable>
 
@@ -276,10 +298,16 @@ Usa Markdown:
       </ScrollView>
 
       <Pressable
-        style={[styles.button, bgButton]}
+        style={({ pressed }) => [
+          styles.button,
+          bgButton,
+          pressed && styles.buttonCreatePressed,
+        ]}
         onPress={() => handleAlert()}
       >
-        <Text style={styles.textButton}>Create News</Text>
+        <Text style={[styles.textButton, txtButton]}>
+          {loading ? "Creating" : "Create News"}
+        </Text>
       </Pressable>
     </Screen>
   );
@@ -318,7 +346,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFC857",
   },
   bgButtonBlue: {
-    backgroundColor: "#4A90E2",
+    backgroundColor: "#0F4C81",
   },
   containerScroll: {
     gap: 10,
@@ -332,17 +360,25 @@ const styles = StyleSheet.create({
     color: "#333A3F",
   },
   imageButton: {
-    backgroundColor: "#E8F5E9",
+    backgroundColor: "#0F4C81",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#4CAF50",
+    borderColor: "#042e53ff",
+  },
+  imageButtonPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
+  },
+  buttonCreatePressed:{
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
   },
   imageButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#2E7D32",
+    color: "#F1F4F6",
   },
   imagePreview: {
     marginTop: 10,

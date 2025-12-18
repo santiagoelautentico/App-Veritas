@@ -5,7 +5,7 @@ export function InputLogin({value, onChangeText, placeholder, secureTextEntry}) 
     const colorScheme = useColorScheme();
 
     const textColor = colorScheme === 'light' ? styles.textDark : styles.textWhite
-    const borderColor = colorScheme === 'light' ? 'blue' : '#FFC857'
+    const borderColor = colorScheme === 'light' ? '#0F4C81' : '#FFC857'
 
     return (
         <TextInput
@@ -21,12 +21,11 @@ export function InputLogin({value, onChangeText, placeholder, secureTextEntry}) 
 
 const styles = StyleSheet.create({
     input: {
-        borderWidth: 1,
         marginBottom: 10,
         padding: 15,
         fontSize: 14,
         borderRadius: 28,
-        borderWidth: 0.5
+        borderWidth: 1,
     },
     textWhite: {
         color: '#F1F4F6'

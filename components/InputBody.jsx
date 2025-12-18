@@ -11,8 +11,8 @@ export function InputBody({
 
   const textColor =
     colorScheme === "light" ? styles.textDark : styles.textWhite;
-  const borderColor = colorScheme === "light" ? "blue" : "#FFC857";
-  const bgPreview = colorScheme === "light" ? "#f9f9f9" : "#1a1a1a";
+  const borderColor = colorScheme === "light" ? "#0F4C81" : "#FFC857";
+  const bgPreview = colorScheme === "light" ? "#f1f4f6" : "#121212";
 
   return (
     <View>
@@ -40,7 +40,7 @@ export function InputBody({
 
 const styles = StyleSheet.create({
   input: {
-    borderWidth: 0.5,
+    borderWidth: 1,
     marginBottom: 10,
     padding: 15,
     fontSize: 14,

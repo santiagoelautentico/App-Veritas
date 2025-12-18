@@ -3,11 +3,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useColorScheme, StyleSheet, Image } from "react-native";
 import { BlurView } from "expo-blur";
 import IconHeaderWhite from "../assets/iconHeaderWhite.png";
+import iconBlack from "../assets/iconBlack.png";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const bgColor = colorScheme === "light" ? "#F1F4F6" : "#121212";
   const textColor = colorScheme === "dark" ? "#F1F4F6" : "#121212";
+  const bgColorHeader = colorScheme === "dark" ? "#ffc75758" : "#02315bf9";
 
   return (
     <SafeAreaProvider>
@@ -18,7 +20,7 @@ export default function RootLayout() {
           title: "",
           headerBackground: () => (
             <BlurView
-              intensity={50}
+              intensity={90}
               tint={colorScheme === "dark" ? "dark" : "light"}
               style={StyleSheet.absoluteFill}
             />
@@ -37,7 +39,7 @@ export default function RootLayout() {
             color: "black",
             headerTitle: () => (
               <Image
-                source={IconHeaderWhite}
+                source={colorScheme === "light" ? iconBlack : IconHeaderWhite}
                 style={{
                   width: 80,
                   height: 32,
@@ -56,6 +58,50 @@ export default function RootLayout() {
               <Image
                 source={IconHeaderWhite}
                 style={{ width: 80, height: 32, resizeMode: "contain" }}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="configScreen"
+          options={{
+            headerShown: true,
+            title: "Settings",
+            headerTitleStyle: {
+              color: "#f1f4f6",
+              fontWeight: "600",
+            },
+            headerBackground: () => (
+              <BlurView
+                intensity={10}
+                tint="light"
+                style={[
+                  bgColorHeader,
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: bgColorHeader },
+                ]}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="createNew"
+          options={{
+            headerShown: true,
+            title: "Create a New",
+            headerTitleStyle: {
+              color: "#f1f4f6",
+              fontWeight: "600",
+            },
+            headerBackground: () => (
+              <BlurView
+                intensity={10}
+                tint="light"
+                style={[
+                  bgColorHeader,
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: bgColorHeader },
+                ]}
               />
             ),
           }}
@@ -104,13 +150,6 @@ export default function RootLayout() {
                 }}
               />
             ),
-          }}
-        />
-        <Stack.Screen
-          name="createNew"
-          options={{
-            headerShown: true,
-            headerTitle: "Create a new",
           }}
         />
       </Stack>

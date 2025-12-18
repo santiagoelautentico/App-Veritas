@@ -16,6 +16,7 @@ import bgDark from "../assets/bgAppDark.png";
 import { InputLogin } from "../components/InputLogin";
 import { BlurView } from "expo-blur";
 import * as ImagePicker from "expo-image-picker";
+import Dropdown from "../components/Dropdown";
 
 export default function createContentCreator() {
   const router = useRouter();
@@ -25,6 +26,54 @@ export default function createContentCreator() {
     colorScheme === "dark" ? styles.textWhite : styles.TextBlack;
   const bgButton =
     colorScheme === "light" ? styles.bgButtonBlue : styles.bgButtonYellow;
+
+  const COUNTRIES = [
+    { id: 1, name: "Uruguay" },
+    { id: 2, name: "Argentina" },
+    { id: 3, name: "Spain" },
+    { id: 4, name: "United States" },
+    { id: 5, name: "Puerto Rico" },
+  ];
+  const JOURNALIST_TYPES = [
+    { id: "politics", name: "Politics" },
+    { id: "economy", name: "Economy & Business" },
+    { id: "technology", name: "Technology" },
+    { id: "sports", name: "Sports" },
+    { id: "entertainment", name: "Entertainment" },
+    { id: "culture", name: "Culture & Arts" },
+    { id: "health", name: "Health & Wellness" },
+    { id: "science", name: "Science" },
+    { id: "environment", name: "Environment" },
+    { id: "education", name: "Education" },
+    { id: "crime", name: "Crime & Justice" },
+    { id: "international", name: "International News" },
+    { id: "local", name: "Local News" },
+    { id: "lifestyle", name: "Lifestyle" },
+    { id: "travel", name: "Travel" },
+    { id: "food", name: "Food & Gastronomy" },
+    { id: "opinion", name: "Opinion & Analysis" },
+    { id: "general", name: "General News" },
+  ];
+  const OCCUPATION_TYPES = [
+    { id: "professional_journalist", name: "Professional Journalist" },
+    { id: "independent_journalist", name: "Independent Journalist" },
+    { id: "reporter", name: "Reporter" },
+    { id: "columnist", name: "Columnist" },
+    { id: "editor", name: "Editor" },
+    { id: "content_creator", name: "Content Creator" },
+    { id: "blogger", name: "Blogger" },
+    { id: "influencer", name: "Social Media Influencer" },
+    { id: "business_owner", name: "Business Owner" },
+    { id: "entrepreneur", name: "Entrepreneur" },
+    { id: "brand_representative", name: "Brand Representative" },
+    { id: "pr_specialist", name: "PR/Communications" },
+    { id: "analyst", name: "Analyst/Expert" },
+    { id: "freelance_writer", name: "Freelance Writer" },
+    { id: "photographer", name: "Photographer" },
+    { id: "videographer", name: "Videographer" },
+    { id: "podcast_host", name: "Podcast Host" },
+    { id: "other", name: "Other" },
+  ];
 
   //Uses States
   const [name_user, setNameUser] = useState("");
@@ -38,6 +87,7 @@ export default function createContentCreator() {
   const [type_of_journalist, setTypeOfJournalist] = useState("");
   const [identification, setIdentification] = useState("");
   const [biography, setBiography] = useState("");
+  const [request, setRequest] = useState("");
   const [imageUri, setImageUri] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
 
@@ -54,7 +104,7 @@ export default function createContentCreator() {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.Images,
         allowsEditing: true,
-        aspect: [16, 9],
+        aspect: [1, 1],
         quality: 0.7,
         base64: true,
       });
@@ -104,6 +154,7 @@ export default function createContentCreator() {
           type_of_journalist,
           identification,
           biography,
+          request,
           ...(imageBase64 && { picture: imageBase64 }),
         }),
       });
@@ -121,7 +172,8 @@ export default function createContentCreator() {
           company,
           type_of_journalist,
           identification,
-          biography
+          biography,
+          request
         );
         return null;
       }
@@ -191,20 +243,20 @@ export default function createContentCreator() {
           </View>
           <View style={styles.containerInput}>
             <Text style={[styles.inputTitle, colorText]}>Country</Text>
-            <InputLogin
+            <Dropdown
               value={id_country}
-              onChangeText={setIdCountry}
-              placeholder={"for the momento put 1"}
-              secureTextEntry={false}
+              onChange={setIdCountry}
+              options={COUNTRIES}
+              placeholder="Select a country"
             />
           </View>
           <View style={styles.containerInput}>
             <Text style={[styles.inputTitle, colorText]}>Ocupation</Text>
-            <InputLogin
+            <Dropdown
               value={ocupation}
-              onChangeText={setOcupation}
-              placeholder={"Freelance Journalist"}
-              secureTextEntry={false}
+              onChange={setOcupation}
+              options={OCCUPATION_TYPES}
+              placeholder="Choose your role"
             />
           </View>
           <View style={styles.containerInput}>
@@ -220,11 +272,11 @@ export default function createContentCreator() {
             <Text style={[styles.inputTitle, colorText]}>
               Type of Journalist
             </Text>
-            <InputLogin
+            <Dropdown
               value={type_of_journalist}
-              onChangeText={setTypeOfJournalist}
-              placeholder={"Policy Journalist"}
-              secureTextEntry={false}
+              onChange={setTypeOfJournalist}
+              options={JOURNALIST_TYPES}
+              placeholder="Choose your area of expertise"
             />
           </View>
           <View style={styles.containerInput}>
@@ -242,6 +294,15 @@ export default function createContentCreator() {
               value={biography}
               onChangeText={setBiography}
               placeholder={"Add a biography"}
+              secureTextEntry={false}
+            />
+          </View>
+          <View style={styles.containerInput}>
+            <Text style={[styles.inputTitle, colorText]}>Request</Text>
+            <InputLogin
+              value={request}
+              onChangeText={setRequest}
+              placeholder={"Why you wanna publish in the app?"}
               secureTextEntry={false}
             />
           </View>
@@ -295,7 +356,8 @@ export default function createContentCreator() {
             company,
             type_of_journalist,
             identification,
-            biography
+            biography,
+            request
           );
           console.log("response from server", data);
         }}
@@ -398,10 +460,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: "100%",
+    width: 200,
     height: 200,
-    borderRadius: 10,
+    borderRadius: '50%',
     marginBottom: 10,
+    objectFit: 'cover'
   },
   removeButton: {
     backgroundColor: "#FF3B30",
